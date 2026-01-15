@@ -13,13 +13,36 @@ except ImportError:
     print("'azure-data-tables' not found. Attempting to install via pip...")
     import subprocess
     import sys
+    import site
+    import importlib
+    
     try:
+        # Try standard install first
         subprocess.check_call([sys.executable, "-m", "pip", "install", "azure-data-tables"])
-        print("Installation successful. Importing library...")
-        from azure.data.tables import TableClient
     except Exception as e:
-        print(f"Failed to install 'azure-data-tables': {str(e)}")
-        raise ImportError("Required library 'azure-data-tables' is missing and auto-installation failed.")
+        print(f"Global install failed: {e}. Attempting user-level install...")
+        # Fallback to user install (common fix for permissions)
+        try:
+            subprocess.check_call([sys.executable, "-m", "pip", "install", "--user", "azure-data-tables"])
+        except Exception as e2:
+            raise ImportError(f"Failed to install 'azure-data-tables': {e2}")
+
+    # Critical: Refresh site packages to recognize the new installation without restarting
+    importlib.reload(site)
+    
+    # Explicitly add user site packages to path if missing (fixes common Alteryx embedded Python issue)
+    if sys.platform == 'win32':
+        user_site = site.getusersitepackages()
+        if user_site not in sys.path:
+            print(f"Adding user site packages to path: {user_site}")
+            sys.path.append(user_site)
+            
+    print("Installation successful. Retrying import...")
+    try:
+        from azure.data.tables import TableClient
+    except ImportError as e:
+        print(f"Import failed even after installation: {e}")
+        raise ImportError("Library installed but import failed. Please try running the workflow one more time to load the new package.")
 
 # -----------------------------------------------------------------------------
 # 2. Read Credentials from Input #1
