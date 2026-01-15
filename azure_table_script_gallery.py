@@ -3,10 +3,12 @@ import pandas as pd
 import sys
 
 # -----------------------------------------------------------------------------
-# 1. Dependencies (Gallery Version)
 # -----------------------------------------------------------------------------
-# NOTE: This version assumes 'azure-data-tables' has been pre-installed 
-# by the Server Administrator on the Gallery worker nodes.
+# 1. Dependencies (Universal Version)
+# -----------------------------------------------------------------------------
+# This script checks for the 'azure-data-tables' library.
+# If missing, it attempts to install it automatically via pip.
+# COMPATIBILITY: Works on both Local Designer (No Admin required) and Alteryx Server.
 try:
     from azure.data.tables import TableClient
 except ImportError:

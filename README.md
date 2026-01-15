@@ -11,23 +11,17 @@ A Python-based utility to read up to five Azure Table Storage tables with your A
 
 ## ⚠️ Security Warning
 **Do not hardcode your AccountKey.** 
-- This repository includes a `.gitignore` that prevents `.csv` and `.xlsx` files from being committed.
 - It is highly recommended to use Alteryx Text Input or encrypted parameters for credentials.
 
 ## Requirements
 - `azure-data-tables` (Python library)
 
-## Version Selection
+## Usage
+The script `azure_table_script_gallery.py` is designed to work universally:
+- **Local Designer**: Auto-installs to your user profile if needed (no Admin rights required).
+- **Alteryx Server**: Auto-installs on the worker node if the library is missing.
 
-### 1. Local Designer (`azure_table_script.py`)
-Designed for users running Alteryx Designer on local machines.
-- **Dependency Handling**: If `azure-data-tables` is not found, the script automatically installs it into the user's `%APPDATA%` folder. This bypasses the need for Windows Administrator privileges.
-- **Compliance**: Note that while this technically works without admin rights, you should verify that installing libraries to your user profile aligns with your company's IT security and compliance policies.
-
-### 2. Alteryx Gallery / Server (`azure_table_script_gallery.py`)
-Designed for workflows running on Alteryx Server worker nodes.
-- **Dependency Handling**: This version assumes libraries are already installed on the server.
-- **Troubleshooting**: If you see a "ModuleNotFoundError" on the Gallery, ask your Server Admin to run `pip install azure-data-tables` on the worker nodes.
+Simply copy the code from `azure_table_script_gallery.py` into your Alteryx Python tool.
 
 ## Configuration
 
