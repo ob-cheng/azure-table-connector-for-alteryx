@@ -48,3 +48,18 @@ Connect a **Text Input** tool to the Python tool (Anchor #1). Each row in your i
 1. Paste the code from the chosen `.py` file into the Alteryx Python tool.
 2. Ensure your Text Input is connected to anchor **#1**.
 3. Run the workflow.
+
+## Performance Tip: Production Mode
+
+The Alteryx Python tool has two modes: **Interactive** (Jupyter Notebook) and **Production**.
+
+**Recommendation:**
+Always switch to **Production Mode** before saving your workflow to the Gallery/Server.
+- **Why?** It runs as a standard Python script without the Jupyter server overhead, making it **faster** and **more stable**.
+- **How?** Click the **"Production"** button in the top-right corner of the Python tool configuration.
+
+  <div align="center">
+    <img src="assets/production_mode.png" alt="Switching to Production Mode" width="300" />
+  </div>
+
+- [Read more in the official Alteryx Documentation](https://help.alteryx.com/current/designer/python-tool)
