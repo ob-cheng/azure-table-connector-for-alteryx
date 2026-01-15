@@ -10,10 +10,16 @@ import sys
 try:
     from azure.data.tables import TableClient
 except ImportError:
-    print("Error: 'azure-data-tables' not found.")
-    print("Please ask your Alteryx Server Administrator to install it using:")
-    print("pip install azure-data-tables")
-    raise ImportError("Required library 'azure-data-tables' is missing on the server.")
+    print("'azure-data-tables' not found. Attempting to install via pip...")
+    import subprocess
+    import sys
+    try:
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "azure-data-tables"])
+        print("Installation successful. Importing library...")
+        from azure.data.tables import TableClient
+    except Exception as e:
+        print(f"Failed to install 'azure-data-tables': {str(e)}")
+        raise ImportError("Required library 'azure-data-tables' is missing and auto-installation failed.")
 
 # -----------------------------------------------------------------------------
 # 2. Read Credentials from Input #1

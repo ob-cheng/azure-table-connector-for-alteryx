@@ -3,36 +3,30 @@ import pandas as pd
 import sys
 
 # -----------------------------------------------------------------------------
-# 1. Install Dependencies (No-Admin Workaround)
 # -----------------------------------------------------------------------------
-import os
-import sys
-import subprocess
-
-# Define a local folder to store libraries (No Admin rights needed)
-# We will use the user's AppData folder which is always writable
-local_lib = os.path.join(os.environ['APPDATA'], 'Alteryx', 'PythonPackages')
-if not os.path.exists(local_lib):
-    os.makedirs(local_lib)
-
-# Add this folder to the Python Path so Alteryx can see the libraries
-if local_lib not in sys.path:
-    sys.path.insert(0, local_lib)
-
+# 1. Dependencies
+# -----------------------------------------------------------------------------
 try:
-    import azure.data.tables
+    from azure.data.tables import TableClient
 except ImportError:
-    print(f"Installing 'azure-data-tables' to {local_lib}...")
+    print("'azure-data-tables' not found. Attempting to install via pip...")
+    import subprocess
+    import sys
     try:
-        # Use subprocess to install directly to our local folder
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "azure-data-tables", "--target", local_lib])
-        import azure.data.tables
-        print("Installation successful!")
+        # Use sys.executable to ensure we install to the current Python environment
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "azure-data-tables"])
+        print("Installation successful. Importing library...")
+        from azure.data.tables import TableClient
     except Exception as e:
-        print(f"Installation failed: {str(e)}")
-        raise RuntimeError("Could not install Azure libraries. Please contact IT or try 'pip install --user azure-data-tables' in a terminal.")
-
-from azure.data.tables import TableClient
+        print(f"Failed to install 'azure-data-tables': {str(e)}")
+        # Fallback: Try installing to user directory if global fails (No Admin rights)
+        try:
+             print("Attempting user-level install...")
+             subprocess.check_call([sys.executable, "-m", "pip", "install", "--user", "azure-data-tables"])
+             print("User-level installation successful.")
+             from azure.data.tables import TableClient
+        except Exception as e2:
+             raise ImportError(f"Required library 'azure-data-tables' is missing and auto-installation failed: {str(e)}\nUser-level install also failed: {str(e2)}")
 
 # -----------------------------------------------------------------------------
 # 2. Read Credentials from Input #1
